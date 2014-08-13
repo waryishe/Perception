@@ -34,6 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "d3dx9.h"
 #include <utility>
 #include <sstream>
+#include "..\..\LibOVR\Include\OVR.h"  
+
 
 
 /**
@@ -159,5 +161,9 @@ public:
 
 protected:
 	float distortionCoefficients[4];
+	float IPD,eyeRelief;
+	UINT resx,resy;
+
+
 };
 #endif

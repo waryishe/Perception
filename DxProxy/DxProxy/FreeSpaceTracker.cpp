@@ -113,7 +113,7 @@ int FreeSpaceTracker::connect()
 		// version 2 protocol
 		msg.messageType = FREESPACE_MESSAGE_DATAMODECONTROLV2REQUEST;
 		msg.dataModeControlV2Request.packetSelect = 3;    // User Frame (orientation)
-		msg.dataModeControlV2Request.modeAndStatus = 0;   // operating mode == full motion
+//		msg.dataModeControlV2Request.modeAndStatus = 0;   // operating mode == full motion
 	}
 	else 
 	{
@@ -157,7 +157,7 @@ void FreeSpaceTracker::close()
 		{
 			msg.messageType = FREESPACE_MESSAGE_DATAMODECONTROLV2REQUEST;
 			msg.dataModeControlV2Request.packetSelect = 0;        // No output 
-			msg.dataModeControlV2Request.modeAndStatus = 1 << 1;  // operating mode == sleep 
+//			msg.dataModeControlV2Request.modeAndStatus = 1 << 1;  // operating mode == sleep 
 		}
 		else 
 		{

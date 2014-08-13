@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
 #include "MotionTrackerFactory.h"
-#include "FreeSpaceTracker.h"
+//#include "FreeSpaceTracker.h"
 #include "FreeTrackTracker.h"
 #include "SharedMemoryTracker.h"
 #include "OculusTracker.h"
@@ -47,7 +47,7 @@ MotionTracker* MotionTrackerFactory::Get(ProxyHelper::ProxyConfig& config)
 		newTracker = new MotionTracker();
 		break;
 	case MotionTracker::HILLCREST:
-		newTracker = new FreeSpaceTracker();
+		//newTracker = new FreeSpaceTracker();
 		break;
 	case MotionTracker::FREETRACK:
 		newTracker = new FreeTrackTracker();

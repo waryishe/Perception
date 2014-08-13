@@ -67,9 +67,6 @@
     <ClCompile Include="StereoViewInterleave.cpp">
       <Filter>Stereo</Filter>
     </ClCompile>
-    <ClCompile Include="FreeSpaceTracker.cpp">
-      <Filter>Tracking</Filter>
-    </ClCompile>
     <ClCompile Include="MotionTracker.cpp">
       <Filter>Tracking</Filter>
     </ClCompile>
@@ -264,9 +261,6 @@
     </ClInclude>
     <ClInclude Include="StereoViewInterleave.h">
       <Filter>Stereo</Filter>
-    </ClInclude>
-    <ClInclude Include="FreeSpaceTracker.h">
-      <Filter>Tracking</Filter>
     </ClInclude>
     <ClInclude Include="MotionTracker.h">
       <Filter>Tracking</Filter>
@@ -487,6 +481,9 @@
       <Filter>HMDisplayInfo</Filter>
     </ClInclude>
     <ClInclude Include="HMDisplayInfoFactory.h">
+      <Filter>HMDisplayInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="HMDisplayInfo_DK2.h">
       <Filter>HMDisplayInfo</Filter>
     </ClInclude>
   </ItemGroup>

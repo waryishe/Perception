@@ -58,34 +58,39 @@ public:
 	/*** OculusTracker public methods ***/
 	int  init();
 	void reset();
+	void BeginFrame();
+	void EndFrame();
 	int  getOrientation(float* yaw, float* pitch, float* roll);
 	void updateOrientation();
 	bool isAvailable();	
+	ovrHmd pHMD;
 
 private:
 	/**
 	* Oculus device manager.
 	***/
-    Ptr<DeviceManager> pManager;
+ //   Ptr<DeviceManager> pManager;
 	/**
 	* Oculus head mounted display device.
 	***/
-    Ptr<HMDDevice> pHMD;
+    //ovrHmd pHMD;
 	/**
 	* Oculus sensor device.
 	***/
-    Ptr<SensorDevice> pSensor;
+   // Ptr<SensorDevice> pSensor;
 	/**
 	* Oculus sensor fusion.
 	* Retrieves tracking data.
 	***/
     // TODO: fix this so it is using unique_ptr from the std memory class.  Typedef conflicts with freespace tracker prevent including memory right now...  
 	//std::unique_ptr<SensorFusion> SFusion;
-	SensorFusion* SFusion;
+	//SensorFusion* SFusion;
 	/**
 	* Oculus orientation quaternion.
 	***/
 	Quatf hmdOrient;
+	ovrFrameTiming FrameRef;
+	bool started;
  };
 
 #endif

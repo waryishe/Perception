@@ -957,7 +957,7 @@ HRESULT WINAPI D3DProxyDevice::BeginScene()
 	#ifdef SHOW_CALLS
 		OutputDebugString("called BeginScene");
 	#endif
-	
+		//tracker->BeginFrame();
 		if (m_isFirstBeginSceneOfFrame) {
 
 		// save screenshot before first clear() is called
@@ -1015,7 +1015,6 @@ HRESULT WINAPI D3DProxyDevice::BeginScene()
 	}
 
 	
-
 	return BaseDirect3DDevice9::BeginScene();
 }
 
@@ -1039,6 +1038,7 @@ HRESULT WINAPI D3DProxyDevice::EndScene()
 		else
 			BRASSA_AdditionalOutput();
 	}
+	//tracker->EndFrame();
 	return BaseDirect3DDevice9::EndScene();
 }
 

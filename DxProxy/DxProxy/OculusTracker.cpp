@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***/ 
 OculusTracker::OculusTracker()
 {
+	started=false;
 	init();
 }
 
@@ -44,12 +45,10 @@ OculusTracker::OculusTracker()
 ***/
 OculusTracker::~OculusTracker()
 {
-	pSensor.Clear();
-	pManager.Clear();
-	if (SFusion)
-		delete SFusion;
-	System::Destroy(); // shutdown LibOVR 
+	ovrHmd_Destroy(pHMD);
+	ovr_Shutdown();
 }
+
 
 /**
 * Oculus init.
@@ -58,37 +57,37 @@ OculusTracker::~OculusTracker()
 int OculusTracker::init()
 {
 	OutputDebugString("OculusTracker Start");
-	System::Init(); // start LibOVR
+	//System::Init(); // start LibOVR
+	ovr_Initialize();
 	OutputDebugString("OculusTracker Initialized");
-	pManager = *DeviceManager::Create();
-	OutputDebugString("PManager Created");
-	pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();
-	OutputDebugString("Created Device");
-	if (!pHMD)
-	{
-		OutputDebugString("No OculusTracker found");
+	//pManager = *DeviceManager::Create();
+	pHMD=ovrHmd_Create(0);
+
+	BOOL err=ovrHmd_ConfigureTracking(pHMD,ovrTrackingCap_Orientation|ovrTrackingCap_MagYawCorrection|ovrTrackingCap_Position,0);
+	//BOOL err=ovrHmd_ConfigureTracking(pHMD,0,0);
+	if (err){
 		return -1;
 	}
+	started=true;
+	//OutputDebugString("PManager Created");
+	//pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();
+	OutputDebugString("Created Device");
+	//if (!pHMD)
+	//{
+	//	OutputDebugString("No OculusTracker found");
+	//	return -1;
+	//}
 	OutputDebugString("Starting PSensor");
-	pSensor = *pHMD->GetSensor();
-	if (SFusion)
-	{
-		OutputDebugString("Deleting Sensor Fusion");
-		SFusion = NULL;
-	}
-	OutputDebugString("Starting Sensor Fusion");
-	SFusion = new SensorFusion();
-	if (pSensor)
-		SFusion->AttachToSensor(pSensor);
-
+	
 	OutputDebugString("oculus tracker initted");
 	
 	OutputDebugString("Get DistortionK Values");
-	OVR::HMDInfo hmdInfo;
-	OVR::Util::Render::StereoConfig stereoConfig;
-	pHMD->GetDeviceInfo(&hmdInfo);
-    stereoConfig.SetHMDInfo(hmdInfo);
-	TCHAR s[256];
+	/*OVR::HMDInfo hmdInfo;
+	/*OVR::Util::Render::StereoConfig stereoConfig;
+	/*pHMD->GetDeviceInfo(&hmdInfo);
+    /*stereoConfig.SetHMDInfo(hmdInfo);
+	
+	/*TCHAR s[256];
 	sprintf_s(s, ("Method Test  =  %f "), 0.01548f);
 	OutputDebugString(s);
 	sprintf_s(s, ("Distortion 0 =  %f "), stereoConfig.GetDistortionK(0));
@@ -106,7 +105,7 @@ int OculusTracker::init()
 	sprintf_s(s, ("Viewport H =  %i "), vp.h);
 	OutputDebugString(s);
 	sprintf_s(s, ("Viewport W =  %i "), vp.w);
-	OutputDebugString(s);
+	OutputDebugString(s);*/
 	return 0;
 }
 
@@ -116,8 +115,23 @@ int OculusTracker::init()
 ***/
 void OculusTracker::reset()
 {
-	if (pSensor)
-		SFusion->Reset();
+	
+}
+
+void OculusTracker::BeginFrame()
+{
+	//return;
+	if (started){
+		FrameRef=ovrHmd_BeginFrameTiming(pHMD,0);
+	}
+}
+
+void OculusTracker::EndFrame()
+{
+	//return;
+	if (started){
+			ovrHmd_EndFrameTiming(pHMD);
+	}
 }
 
 /**
@@ -131,12 +145,24 @@ int OculusTracker::getOrientation(float* yaw, float* pitch, float* roll)
 	OutputDebugString("OculusTracker getOrient\n");
 #endif
 
-	if(SFusion->IsAttachedToSensor() == false)
-		return 1;						// error no sensor
+	//ovrTrackingState ts=ovrHmd_GetTrackingState(pHMD,ovr_GetTimeInSeconds());
+	ovrTrackingState ts=ovrHmd_GetTrackingState(pHMD,FrameRef.ScanoutMidpointSeconds);
+	
+	Quatf hmdOrient=ts.HeadPose.ThePose.Orientation;
+	//Quatf hmdOrient;
+	//hmdOrient.w=pose.Orientation.w;
+	//Must Swap x<->y. Not sure why. No longer? Capabilities problem? I wish I knew what I was doing...
+	/*float x,y;
+	x=hmdOrient.x;
+	y=hmdOrient.y;
 
-	// all orientations are in degrees
-	hmdOrient = SFusion->GetOrientation();
-	hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(yaw, pitch, roll);
+	hmdOrient.x=y;
+	hmdOrient.y=x;*/
+
+	//hmdOrient.z=pose.Orientation.z;*/
+
+	hmdOrient.GetEulerAngles<Axis_Y,Axis_X,Axis_Z>(yaw, pitch, roll);
+	
 
 	// set primary orientations
 	primaryYaw = *yaw;
@@ -158,7 +184,7 @@ void OculusTracker::updateOrientation()
 #ifdef _DEBUG
 	OutputDebugString("OculusTracker updateOrientation\n");
 #endif
-
+	BeginFrame();
 	// Get orientation from Oculus tracker.
 	if(getOrientation(&yaw, &pitch, &roll) == 0)
 	{
@@ -196,6 +222,7 @@ void OculusTracker::updateOrientation()
 		currentPitch = pitch;
 		currentRoll = (float)( roll * (PI/180.0) * multiplierRoll);	// convert from deg to radians then apply mutiplier
 	}
+	EndFrame();
 }
 
 /**
@@ -204,5 +231,5 @@ void OculusTracker::updateOrientation()
 ***/
 bool OculusTracker::isAvailable()
 {
-	return SFusion->IsAttachedToSensor();
+	return true;
 }

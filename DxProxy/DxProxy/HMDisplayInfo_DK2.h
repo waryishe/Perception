@@ -27,8 +27,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef HMDISPLAYINFO_RIFTUP_H_INCLUDED
-#define HMDISPLAYINFO_RIFTUP_H_INCLUDED
+#ifndef HMDISPLAYINFO_DK2_H_INCLUDED
+#define HMDISPLAYINFO_DK2_H_INCLUDED
 
 #include "d3d9.h"
 #include "d3dx9.h"
@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * Predefined head mounted display info.
 * Default constructing with Rift DK1 values.
 ***/
-struct HMDisplayInfo_RiftUp :
+struct HMDisplayInfo_DK2 :
 	public HMDisplayInfo
 {
 public:
@@ -53,12 +53,13 @@ public:
 	* Default constructing with Rift DK1 values.
 	***/
 
-	HMDisplayInfo_RiftUp() :
+	HMDisplayInfo_DK2() :
 		HMDisplayInfo()
 	{
+		//ovr_Initialize();
 		distortionCoefficients[0] = 1.0f;
-		distortionCoefficients[1] = 0.18f;
-		distortionCoefficients[2] = 0.115f;
+		distortionCoefficients[1] = 0.15f;
+		distortionCoefficients[2] = 0.05f;
 		distortionCoefficients[3] = 0.0f;
 		
 		std::stringstream sstm;
@@ -109,7 +110,7 @@ public:
 	***/
 	virtual float GetLensYCenterOffset()
 	{
-		return 0.5f;
+		return 0.3f;
 	}
 
 	/**

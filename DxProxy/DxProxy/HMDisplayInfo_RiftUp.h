@@ -56,11 +56,18 @@ public:
 	HMDisplayInfo_RiftUp() :
 		HMDisplayInfo()
 	{
+		ovr_Initialize();
 		distortionCoefficients[0] = 1.0f;
-		distortionCoefficients[1] = 0.18f;
-		distortionCoefficients[2] = 0.115f;
+		distortionCoefficients[1] = 0.15f;
+		distortionCoefficients[2] = 0.09f;
 		distortionCoefficients[3] = 0.0f;
 		
+		ovrHmd hmd=ovrHmd_Create(0);
+		IPD=ovrHmd_GetFloat(hmd,OVR_KEY_IPD,0);
+		resx=hmd->Resolution.w;
+		resy=hmd->Resolution.h;
+		ovrHmd_Destroy(hmd);
+
 		std::stringstream sstm;
 		sstm << "scaleToFillHorizontal: " << GetScaleToFillHorizontal() << std::endl;
 		OutputDebugString(sstm.str().c_str());
@@ -74,7 +81,8 @@ public:
 	***/
 	virtual std::pair<UINT, UINT>  GetResolution()
 	{
-		return std::make_pair<UINT, UINT>(1920, 1080);
+		return std::make_pair(resx,resy);
+		//return std::make_pair<UINT, UINT>(resx, resy);
 	}
 
 	/**
@@ -99,6 +107,7 @@ public:
 	***/
 	virtual float GetPhysicalLensSeparation()
 	{
+		return IPD;
 		return 0.064f;
 	}
 
